@@ -2,6 +2,6 @@
 #define PROGRAM_USAGE_H
 #include <stdio.h>
 
-void print_usage(void);
+void print_usage(char**);
 
 #endif

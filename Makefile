@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall -I./include# -g
+CFLAGS=-Wall -I./include -g -fsanitize=address
 SRC=$(shell find . -name "*.c")
 PROJ=./shellgen
 

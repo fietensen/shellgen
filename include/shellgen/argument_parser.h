@@ -11,6 +11,9 @@
 #define ARGUMENT_MODE_x86 "x86"
 #define ARGUMENT_MODE_GENERATE "generate"
 #define ARGUMENT_MODE_GENERATE_2 "gen"
+#define ARGUMENT_OMODE_RAW "raw"
+#define ARGUMENT_OMODE_HEXESC "rawstring"
+#define ARGUMENT_OMODE_ASM "asm"
 
 #define MODE_NONE 0
 #define MODE_GENERATE 1
@@ -25,11 +28,10 @@
 #define TYPE_REGISTER 2
 #define TYPE_STRING 3
 
-/*
-struct arg_string {
-    unsigned int size;
-    char *value;
-};*/
+#define OMODE_NONE 0
+#define OMODE_RAW 1
+#define OMODE_HEXESC 2
+#define OMODE_ASM 3
 
 typedef struct {
     unsigned char type;
@@ -43,10 +45,12 @@ typedef struct {
 typedef struct {
     bool x64;
     unsigned int mode;
+    unsigned int output;
     int nArgs;
-    program_argument args[6];
+    program_argument args[7];
 } program_arguments;
 
+extern char *registers[];
 extern program_arguments _program_arguments;
 program_arguments *get_pargs(int, char**);
 

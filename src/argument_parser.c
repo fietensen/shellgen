@@ -1,11 +1,8 @@
 #include <shellgen/argument_parser.h>
 
 program_arguments _program_arguments;
-char *registers[] = {"ah", "al", "bh", "bl", \
-    "ch", "cl", "dh", "dl", "si", "di", "bp", "sp", \
-    "ax", "bx", "cx", "dx", "sp", "bp", "si", "di", \
-    "eax", "ebx", "ecx", "edx", "esi", "edi", "ebp", "esp", \
-    "rax", "rcx", "rbx", "rsp", "rsi", "rdi", "r8", "r9", "r10", \
+char *registers[] = {"eax", "ecx", "edx", "ebx", "esp", "ebp", "esi", "edi", \
+    "rax", "rcx", "rdx", "rbx", "rsp", "rbp", "r8", "r9", "r10", \
     "r11", "r12", "r13", "r14", "r15", 0};
 
 int _getreg(char *regname) {
@@ -48,7 +45,8 @@ bool _chkint(char *string)
 
 bool _isarg(char *arg)
 {
-    char *argument = malloc(strlen(arg));
+    char *argument = malloc(strlen(arg)+1);
+    memset(argument, 0, strlen(arg)+1);
     strcpy(argument, arg);
 
     char *s_ptr = strrchr(argument, ':');
@@ -108,12 +106,29 @@ program_argument _parsearg(char *argument)
     return arg;
 }
 
+bool validate_arch(program_arguments *pArgs)
+{
+    for (int i=0;i<pArgs->nArgs;i++) {
+        if (pArgs->args[i].type == TYPE_REGISTER) {
+            if (pArgs->args[i]._reg >= _getreg("rax") && !pArgs->x64) {
+                printf("[ERROR]: Cannot use register [%s] in 32 bit mode.\n", registers[pArgs->args[i]._reg]);
+                return false;
+            } else if (pArgs->args[i]._reg < _getreg("rax") && pArgs->x64) {
+                printf("[ERROR]: Cannot use register [%s] in 64 bit mode.\n", registers[pArgs->args[i]._reg]);
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 program_arguments *get_pargs(int argc, char **argv)
 {    
     // clearing the argument structure
     _program_arguments.nArgs = 0;
     _program_arguments.x64 = false;
     _program_arguments.mode = MODE_NONE;
+    _program_arguments.output = OMODE_NONE;
 
     // mapping arguments
     for (int i=1;i<argc;i++) {
@@ -124,12 +139,18 @@ program_arguments *get_pargs(int argc, char **argv)
                 _program_arguments.x64 = false;
             } else if (strcmp(argv[i]+1, ARGUMENT_MODE_GENERATE) == 0 || strcmp(argv[i]+1, ARGUMENT_MODE_GENERATE_2) == 0) {
                 _program_arguments.mode = MODE_GENERATE;
-            }else {
+            } else if (strcmp(argv[i]+1, ARGUMENT_OMODE_ASM) == 0) {
+                _program_arguments.output = OMODE_ASM;
+            } else if (strcmp(argv[i]+1, ARGUMENT_OMODE_HEXESC) == 0) {
+                _program_arguments.output = OMODE_HEXESC;
+            } else if (strcmp(argv[i]+1, ARGUMENT_OMODE_RAW) == 0) {
+                _program_arguments.output = OMODE_RAW;
+            } else {
                 printf("[ERROR]: Invalid argument supplied. \"%s\" (Argument %d)\n", argv[i], i);
                 return NULL;
             }
         } else if (_isarg(argv[i])) {
-            if (_program_arguments.nArgs < 6) {
+            if ((_program_arguments.nArgs < 7 && !_program_arguments.x64) || (_program_arguments.nArgs < 8 || _program_arguments.x64)) {
                 _program_arguments.args[_program_arguments.nArgs] = _parsearg(argv[i]);
                 _program_arguments.nArgs++;
             } else {
@@ -142,5 +163,6 @@ program_arguments *get_pargs(int argc, char **argv)
         }
     }
 
+    if (!validate_arch(&_program_arguments)) return NULL;
     return &_program_arguments;
 }
