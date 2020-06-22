@@ -14,6 +14,8 @@
 #define ARGUMENT_OMODE_RAW "raw"
 #define ARGUMENT_OMODE_HEXESC "rawstring"
 #define ARGUMENT_OMODE_ASM "asm"
+#define ARGUMENT_ENDIANNESS_LITTLE "little"
+#define ARGUMENT_ENDIANNESS_BIG "big"
 
 #define MODE_NONE 0
 #define MODE_GENERATE 1
@@ -22,6 +24,10 @@
 #define TYPEID_INT32 "int32"
 #define TYPEID_REGISTER "register"
 #define TYPEID_CHAR "char"
+
+#define ENDIANNESS_NONE 0
+#define ENDIANNESS_LITTLE 1
+#define ENDIANNESS_BIG 2
 
 #define TYPE_CHAR 0
 #define TYPE_INT32 1
@@ -44,6 +50,7 @@ typedef struct {
 
 typedef struct {
     bool x64;
+    char endianness;
     unsigned int mode;
     unsigned int output;
     int nArgs;

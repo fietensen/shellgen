@@ -30,6 +30,9 @@ int main(int argc, char **argv)
     } else if (pArgs->output == OMODE_NONE) {
         printf("[ERROR]: No output mode specified.\n");
         return 1;
+    } else if (pArgs->endianness == ENDIANNESS_NONE) {
+        printf("[ERROR]: No endianness specified.\n");
+        return 1;
     } else if (pArgs->mode == MODE_GENERATE) {
         for (int i=0;i<pArgs->nArgs;i++) {
             pack_argument(pArgs, i);

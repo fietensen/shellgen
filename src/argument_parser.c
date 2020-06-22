@@ -129,6 +129,7 @@ program_arguments *get_pargs(int argc, char **argv)
     _program_arguments.x64 = false;
     _program_arguments.mode = MODE_NONE;
     _program_arguments.output = OMODE_NONE;
+    _program_arguments.endianness = ENDIANNESS_NONE;
 
     // mapping arguments
     for (int i=1;i<argc;i++) {
@@ -145,6 +146,10 @@ program_arguments *get_pargs(int argc, char **argv)
                 _program_arguments.output = OMODE_HEXESC;
             } else if (strcmp(argv[i]+1, ARGUMENT_OMODE_RAW) == 0) {
                 _program_arguments.output = OMODE_RAW;
+            } else if (strcmp(argv[i]+1, ARGUMENT_ENDIANNESS_BIG) == 0) {
+                _program_arguments.endianness = ENDIANNESS_BIG;
+            } else if (strcmp(argv[i]+1, ARGUMENT_ENDIANNESS_LITTLE) == 0) {
+                _program_arguments.endianness = ENDIANNESS_LITTLE;
             } else {
                 printf("[ERROR]: Invalid argument supplied. \"%s\" (Argument %d)\n", argv[i], i);
                 return NULL;

@@ -8,7 +8,7 @@ struct opcode {
 
 struct sRegister {
     char *name;
-    char *pop, *push, *xor;
+    char *pop, *push, *xor, *movs;
 };
 
 extern struct sRegister lRegisters[2][7];

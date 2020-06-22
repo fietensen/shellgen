@@ -11,11 +11,6 @@ void free_WordStructure(WordStructure ws)
     free(ws.structure);
 }
 
-char **parse_string(char *string)
-{
-    
-}
-
 WordStructure parse_stringarray(char *string)
 {
     WordStructure ws;
